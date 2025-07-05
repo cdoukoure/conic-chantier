@@ -52,10 +52,12 @@ class ContactController extends Controller
             $contacts = Contact::select(['id', 'type', 'name', 'email', 'phone', 'address', 'siret']);
 
             return DataTables::of($contacts)
+                /*
                 ->addColumn('actions', function ($row) {
                     return '<button class="btn btn-sm btn-warning btn-edit" data-id="' . $row->id . '">Éditer</button>';
                 })
                 ->rawColumns(['actions'])
+                //*/
                 ->make(true);
         }
     }
@@ -70,28 +72,6 @@ class ContactController extends Controller
         // Dans store() et update()
         $validatedData = $request->validate(Contact::rules($contact->id ?? null));
         $contact = Contact::create($validatedData); // ou update()
-
-        /*
-        $validator = Validator::make($request->all(), [
-            'type' => ['required', 'string', Rule::in(['client', 'fournisseur', 'prestataire', 'ouvrier', 'autre'])],
-            // 'company_name' => 'nullable|string|max:255',
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|unique:contacts,email',
-            'phone' => 'required|string|max:20',
-            'address' => 'nullable|string',
-            'siret' => 'nullable|string|size:14',
-            'metadata' => 'nullable|json'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Validation error',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $contact = Contact::create($validator->validated());
-        //*/
 
         return response()->json([
             'message' => 'Contact created successfully',
@@ -113,40 +93,15 @@ class ContactController extends Controller
         return response()->json($contact);
     }
 
-    public function edit(Contact $contact)
-    {
-        return response()->json($contact);
-    }
-
     /**
      * Update the specified contact.
      */
     public function update(Request $request, Contact $contact)
     {
-        $validator = Validator::make($request->all(), [
-            'type' => ['sometimes', 'string', Rule::in(['client', 'fournisseur', 'prestataire', 'ouvrier', 'autre'])],
-            // 'company_name' => 'sometimes|nullable|string|max:255',
-            'name' => 'sometimes|string|max:255',
-            'email' => [
-                'sometimes',
-                'nullable',
-                'email',
-                Rule::unique('contacts')->ignore($contact->id)
-            ],
-            'phone' => 'sometimes|string|max:20',
-            'address' => 'sometimes|nullable|string',
-            'siret' => 'sometimes|nullable|string|size:14',
-            'metadata' => 'sometimes|nullable|json'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Validation error',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $contact->update($validator->validated());
+        // Dans store() et update()
+        $validatedData = $request->validate(Contact::rules($contact->id ?? null));
+    
+        $contact->update($validatedData);
 
         return response()->json([
             'message' => 'Contact updated successfully',

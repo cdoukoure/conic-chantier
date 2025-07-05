@@ -2,10 +2,64 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
+    use HasFactory;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    
+    protected $fillable = [
+        'name',
+        'type',
+        'description',
+        'budget',
+        'start_date',
+        'end_date',
+        'parent_id',
+        'client_id',
+        'custom_fields',
+    ];
+
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'custom_fields' => 'array',
+    ];
+
+    /**
+     * Types de contacts disponibles
+     */
+    public const TYPES = ['projet', 'chantier', 'phase', 'sous-phase'];
+
+    /**
+     * Validation rules
+     */
+    public static function rules($projectId = null)
+    {
+        return [
+            'type' => 'required|in:' . implode(',', self::TYPES),
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'budget' => 'nullable|numeric|min:2',
+            // 'email' => 'nullable|email|max:255|unique:contacts,email,' . $contactId,
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
+            'client_id' => 'nullable',
+            'parent_id' => 'nullable',
+            'custom_fields' => 'nullable|array'
+        ];
+    }
 
     public function parent()
     {
@@ -20,6 +74,11 @@ class Project extends Model
     public function client()
     {
         return $this->belongsTo(Contact::class, 'client_id');
+    }
+
+    public function chantiers()
+    {
+        return $this->hasMany(Project::class, 'parent_id')->where('type', 'chantier');
     }
 
     /*
@@ -39,11 +98,10 @@ class Project extends Model
     public function contacts()
     {
         return $this->belongsToMany(Contact::class, 'project_contact')
-            ->withPivot(['role', 'hourly_rate'])
-            ->withTimestamps();
+            ->withPivot(['role', 'hourly_rate']);
+        // ->withTimestamps(); // si tu as des timestamps
+        //->withoutTimestamps();
     }
-
-
 
     public function workers()
     {
@@ -55,10 +113,15 @@ class Project extends Model
         return $this->contacts()
             ->wherePivot('role', 'fournisseur');
     }
-    public function prestataires()
+    public function providers()
     {
         return $this->contacts()
             ->wherePivot('role', 'prestataire');
+    }
+    public function othersContacts()
+    {
+        return $this->contacts()
+            ->wherePivot('role', 'autre');
     }
 
 

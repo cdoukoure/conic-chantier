@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->enum('role', ['fournisseur', 'prestataire', 'ouvrier', 'autre'])->default('ouvrier');
             $table->decimal('hourly_rate', 10, 2)->nullable(); // Pour les ouvriers
             $table->primary(['project_id', 'contact_id', 'role']);
+            $table->timestamps();
         });
     }
 

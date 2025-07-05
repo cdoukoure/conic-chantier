@@ -79,7 +79,8 @@ class Contact extends Model
     {
         return $this->belongsToMany(Project::class, 'project_contact')
             ->withPivot(['role', 'hourly_rate'])
-            ->withTimestamps(); // si tu as des timestamps
+            // ->withTimestamps(); // si tu as des timestamps
+            ->withoutTimestamps();
     }
 
     public function financialMovements()

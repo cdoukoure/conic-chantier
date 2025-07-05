@@ -23,11 +23,12 @@ class DatabaseSeeder extends Seeder
         //*/
 
         $this->call([
-            ContactSeeder::class,
-            User::factory()->create([
+            // ContactSeeder::class,
+            ProjectSeeder::class,
+            /* User::factory()->create([
                 'name' => 'Test User',
                 'email' => 'test@example.com',
-            ])
+            ]) */
         ]);
     }
 }
