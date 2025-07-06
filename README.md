@@ -1,6 +1,6 @@
 # 🏗️ Laravel Project Manager
 
-![CI](https://github.com/cdoukoure/conic-devis/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/cdoukoure/conic-chantier/actions/workflows/ci.yml/badge.svg)
 
 
 
