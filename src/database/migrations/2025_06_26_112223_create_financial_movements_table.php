@@ -26,7 +26,7 @@ return new class extends Migration {
             // Pour lier à des documents
             $table->string('document_path')->nullable();
             $table->timestamps();
-        });
+        }); 
     }
 
     /**

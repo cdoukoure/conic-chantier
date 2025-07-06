@@ -23,8 +23,10 @@ class DatabaseSeeder extends Seeder
         //*/
 
         $this->call([
-            // ContactSeeder::class,
+            ContactSeeder::class,
             ProjectSeeder::class,
+            FinancialMovementCategorieSeeder::class,
+            ProjectContactSeeder::class
             /* User::factory()->create([
                 'name' => 'Test User',
                 'email' => 'test@example.com',

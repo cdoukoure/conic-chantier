@@ -4,6 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Contact;
+use App\Models\FinancialMovement;
+use App\Models\FinancialMovementCategorie;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -111,18 +113,128 @@ class ProjectController extends Controller
         return DataTables::of($contacts)
             ->addColumn('role', fn($contact) => ucfirst($contact->pivot->role))
             ->addColumn('hourly_rate', fn($contact) => $contact->pivot->hourly_rate)
-            ->addColumn('actions', function ($contact) {
+            /*->addColumn('actions', function ($contact) {
                 return view('components.contact-actions', compact('contact'))->render();
-            })
+            })//*/
             ->rawColumns(['actions'])
             ->make(true);
     }
 
+    // 🔵 Ajouter un contact à un projet
+    public function attachContact(Request $request, Project $project)
+    {
+        $validated = $request->validate([
+            'contact_id' => 'required|exists:contacts,id',
+            'role' => 'required|string',
+            'hourly_rate' => 'nullable|numeric',
+        ]);
+
+        $project->contacts()->attach($validated['contact_id'], [
+            'role' => $validated['role'],
+            'hourly_rate' => $validated['hourly_rate'],
+        ]);
+
+        return response()->json(['message' => 'Contact ajouté au projet']);
+    }
+
+    // 🔴 Détacher un contact
+    public function detachContact(Project $project, Contact $contact)
+    {
+        $project->contacts()->detach($contact->id);
+        return response()->json(['message' => 'Contact retiré du projet']);
+    }
+
+    /*
     public function projectFinancesDatatable(Project $project)
     {
         $finances = $project->financialMovements()->get(); // ->with('client');
 
         return DataTables::of($finances)->make(true);
+    }
+    //*/
+
+
+    // 🟣 Liste des mouvements financiers liés à un projet
+    public function projectFinancesDatatable(Project $project)
+    {
+        $finances = FinancialMovement::with('contact')
+            ->where('project_id', $project->id);
+
+        return DataTables::of($finances)
+            ->addColumn('contact_name', fn($fm) => $fm->contact->name ?? '-')
+            ->addColumn('actions', function ($fm) {
+                return view('projects.partials.finances_actions', compact('fm'))->render();
+            })
+            ->rawColumns(['actions'])
+            ->make(true);
+    }
+
+    // 🟢 Création d’un mouvement financier
+    public function storeFinancialMovement(Request $request, Project $project)
+    {
+        $validated = $request->validate([
+            'category_id' => 'required|exists:financial_movement_categories,id',
+            'flow_type' => 'required|in:in,out',
+            'amount' => 'required|numeric',
+            'operation_date' => 'required|date',
+            'reference' => 'nullable|string',
+            'payment_method' => 'required|in:cash,check,transfer,card',
+            'description' => 'nullable|string',
+            'contact_id' => 'nullable|exists:contacts,id',
+        ]);
+
+        $movement = $project->financialMovements()->create($validated);
+
+        return response()->json(['message' => 'Mouvement créé', 'data' => $movement]);
+    }
+
+    // 🟠 Mise à jour d’un mouvement financier
+    public function showFinancialMovement(Request $request, Project $project, FinancialMovement $movement)
+    {
+        if ($movement->project_id !== $project->id) {
+            abort(403);
+        }
+
+        // Réponse pour l'API
+        if ($request->wantsJson()) {
+            return response()->json($movement);
+        }
+
+        abort(403);
+    }
+
+    // 🟠 Mise à jour d’un mouvement financier
+    public function updateFinancialMovement(Request $request, Project $project, FinancialMovement $movement)
+    {
+        if ($movement->project_id !== $project->id) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'category_id' => 'required|exists:financial_movement_categories,id',
+            'flow_type' => 'required|in:in,out',
+            'amount' => 'required|numeric',
+            'operation_date' => 'required|date',
+            'reference' => 'nullable|string',
+            'payment_method' => 'required|in:cash,check,transfer,card',
+            'description' => 'nullable|string',
+            'contact_id' => 'nullable|exists:contacts,id',
+        ]);
+
+        $movement->update($validated);
+
+        return response()->json(['message' => 'Mouvement mis à jour']);
+    }
+
+    // 🔻 Suppression d’un mouvement financier
+    public function deleteFinancialMovement(Project $project, FinancialMovement $movement)
+    {
+        if ($movement->project_id !== $project->id) {
+            abort(403);
+        }
+
+        $movement->delete();
+        return response()->json(['message' => 'Mouvement supprimé']);
     }
 
 
@@ -154,12 +266,14 @@ class ProjectController extends Controller
         // Réponse pour le web
 
         if ($project->type == 'chantier') {
+            $categories = FinancialMovementCategorie::all();
             $clients = Contact::whereNot('type', 'client')->select('id', 'name')->get();
-            $project->load(['parent.client', 'contacts', 'financialMovements']);
+            $project->load(['parent.client', 'contacts', 'financialMovements.contact']);
 
             return view('projects.chantier', [
                 'project' => $project,
-                'clients' => $clients
+                'clients' => $clients,
+                'categories' => $categories,
             ]);
         }
 

@@ -3,9 +3,9 @@
 @section('title', 'Projets')
 
 @section('content')
-    <div class="container">
-        <h2 class="mb-3">Liste des projets</h2>
-        <button class="btn btn-primary mb-3" id="btnAddProject">Nouveau projet</button>
+    <div class="container pt-4">
+
+        <button class="btn btn-primary mb-3 mt-4" id="btnAddProject">Nouveau projet</button>
 
         <table class="table table-bordered" id="projectsTable">
             <thead>

@@ -14,6 +14,20 @@ class ProjectSeeder extends Seeder
     public function run(): void
     {
         //
-        Project::factory()->count(10)->create(); // si tu as une factory
+        // Project::factory()->count(10)->create(); // si tu as une factory
+        // Créer 5 projets principaux
+        Project::factory()->count(10)->create()->each(function ($project) {
+            // Pour chaque projet, créer 5 chantiers liés
+            /*
+            Project::factory()
+                ->count(5)
+                ->chantier($project)
+                ->create();
+            //*/
+            Project::factory()
+                ->chantierWithRelations($project)
+                ->count(random_int(2,5))
+                ->create();
+        });
     }
 }

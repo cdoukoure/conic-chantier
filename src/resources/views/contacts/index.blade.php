@@ -31,8 +31,8 @@
 @endpush
 
 @section('content')
-    <div class="container">
-        <h2 class="mb-3">Liste des contacts</h2>
+    <div class="container pt-4">
+        <h2 class="mt-4">Liste des contacts</h2>
         <button class="btn btn-primary mb-3" id="btnAddContact">Nouveau contact</button>
 
         <table class="table table-bordered" id="contactsTable">
@@ -136,13 +136,13 @@
                         orderable: false,
                         render: function (data, type, row) {
                             return `
-                                <button class="btn btn-sm btn-outline-primary me-2 btn-edit" data-id="${data}">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger" onclick="deleteContact(${data})">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            `;
+                                    <button class="btn btn-sm btn-outline-primary me-2 btn-edit" data-id="${data}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteContact(${data})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                `;
                         }
                     }
                 ],
@@ -252,4 +252,3 @@
         }
     </script>
 @endpush
-
