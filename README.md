@@ -1,5 +1,9 @@
 # 🏗️ Laravel Project Manager
 
+![CI](https://github.com/cdoukoure/conic-devis/actions/workflows/ci.yml/badge.svg)
+
+
+
 Ce projet est une application web développée avec **Laravel 10** destinée à la gestion de projets, chantiers, contacts et mouvements financiers. Il s'adresse à toute organisation souhaitant suivre efficacement l'avancement de ses projets et la traçabilité financière associée.
 
 ## 🚀 Fonctionnalités clés
