@@ -26,7 +26,8 @@ class DatabaseSeeder extends Seeder
             ContactSeeder::class,
             ProjectSeeder::class,
             FinancialMovementCategorieSeeder::class,
-            ProjectContactSeeder::class
+            ProjectContactSeeder::class,
+            PhaseSeeder::class
             /* User::factory()->create([
                 'name' => 'Test User',
                 'email' => 'test@example.com',

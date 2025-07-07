@@ -24,6 +24,7 @@ class Project extends Model
         'end_date',
         'parent_id',
         'client_id',
+        'phase_id',
         'custom_fields',
     ];
 
@@ -40,7 +41,7 @@ class Project extends Model
     /**
      * Types de contacts disponibles
      */
-    public const TYPES = ['projet', 'chantier', 'phase', 'sous-phase'];
+    public const TYPES = ['projet', 'chantier'];
 
     /**
      * Validation rules
@@ -57,6 +58,7 @@ class Project extends Model
             'end_date' => 'nullable|date',
             'client_id' => 'nullable',
             'parent_id' => 'nullable',
+            'phase_id' => 'nullable',
             'custom_fields' => 'nullable|array'
         ];
     }
@@ -74,6 +76,11 @@ class Project extends Model
     public function client()
     {
         return $this->belongsTo(Contact::class, 'client_id');
+    }
+
+    public function phase()
+    {
+        return $this->belongsTo(Phase::class, 'phase_id');
     }
 
     public function chantiers()

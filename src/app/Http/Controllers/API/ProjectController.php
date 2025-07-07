@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Contact;
 use App\Models\FinancialMovement;
 use App\Models\FinancialMovementCategorie;
+use App\Models\Phase;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -100,11 +101,26 @@ class ProjectController extends Controller
         abort(403);
     }
 
-    public function projectChantiersDatatable(Project $project)
+    public function projectChantiersDatatable(Request $request, Project $project)
     {
-        $chantiers = $project->chantiers(); // ->with('client');
+        // $chantiers = $project->chantiers()->with('phase');
 
-        return DataTables::of($chantiers)->make(true);
+        // return DataTables::of($chantiers)->make(true);
+
+        if ($request->ajax()) {
+            $chantiers = Project::with(['client:id,name','phase:id,name'])
+                ->where('type', 'chantier')
+                ->where('parent_id', $project->id)
+                ->get();
+
+            return DataTables::of($chantiers)
+                ->addColumn('phase_name', function ($chantier) {
+                    return $chantier->phase->name ?? '-';
+                })
+                ->make(true);
+        }
+
+        abort(403);
     }
     public function projectContactsDatatable(Project $project)
     {
@@ -265,6 +281,9 @@ class ProjectController extends Controller
 
         // Réponse pour le web
 
+
+        $phases = Phase::all();
+
         if ($project->type == 'chantier') {
             $categories = FinancialMovementCategorie::all();
             $clients = Contact::whereNot('type', 'client')->select('id', 'name')->get();
@@ -274,11 +293,13 @@ class ProjectController extends Controller
                 'project' => $project,
                 'clients' => $clients,
                 'categories' => $categories,
+                'phases' => $phases,
             ]);
         }
 
         return view('projects.detail', [
-            'project' => $project
+            'project' => $project,
+            'phases' => $phases,
         ]);
     }
 

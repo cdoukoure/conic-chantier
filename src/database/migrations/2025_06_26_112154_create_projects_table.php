@@ -13,13 +13,14 @@ return new class extends Migration {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->enum('type', ['projet', 'chantier', 'phase', 'sous-phase'])->default('projet');
+            $table->enum('type', ['projet', 'chantier'])->default('projet');
             $table->text('description')->nullable();
             $table->decimal('budget', 15, 2)->default(0);
             $table->date('start_date');
             $table->date('end_date')->nullable();
             $table->foreignId('parent_id')->nullable()->constrained('projects')->onDelete('cascade');
             $table->foreignId('client_id')->nullable()->constrained('contacts');
+            $table->foreignId('phase_id')->nullable()->constrained('phases');
             $table->json('custom_fields')->nullable();
             $table->timestamps();
         });

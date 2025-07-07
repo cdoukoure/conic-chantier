@@ -55,6 +55,7 @@ class ProjectFactory extends Factory
             ];
         });
     }
+    
     /**
      * Crée un chantier (sous-projet) avec contacts et mouvements financiers
      */

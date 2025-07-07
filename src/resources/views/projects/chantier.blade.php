@@ -20,6 +20,9 @@
                         <dt class="col-sm-3">Chantier</dt>
                         <dd class="col-sm-9">{{ $project->name }}</dd>
 
+                        <dt class="col-sm-3">Phase</dt>
+                        <dd class="col-sm-9">{{ optional($project->phase)->name ?? '-' }}</dd>
+
                         <dt class="col-sm-3">Début</dt>
                         <dd class="col-sm-9">{{ $project->start_date }}</dd>
 
