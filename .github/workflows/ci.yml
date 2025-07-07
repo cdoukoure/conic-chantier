@@ -1,4 +1,4 @@
-name: CI
+name: CI & DevSecOps
 
 on:
   push:
@@ -8,6 +8,7 @@ on:
 
 jobs:
   laravel-tests:
+    name: ✅ Tests Laravel
     runs-on: ubuntu-latest
 
     services:
@@ -46,7 +47,7 @@ jobs:
       - name: 🔐 Générer la clé Laravel
         run: php artisan key:generate
 
-      - name: 📋 Attendre MySQL et lancer les migrations
+      - name: 🗄️ Lancer les migrations
         env:
           DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1
@@ -54,8 +55,51 @@ jobs:
           DB_DATABASE: laravel
           DB_USERNAME: laravel
           DB_PASSWORD: secret
-        run: |
-          php artisan migrate --force
+        run: php artisan migrate --force
 
       - name: ✅ Lancer les tests
         run: php artisan test
+
+  php-lint:
+    name: 🧠 Analyse statique PHP (phpstan)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: ⚙️ Installer PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+
+      - name: 📦 Installer les dépendances
+        run: composer install --no-progress
+
+      - name: 🧠 Analyse avec PHPStan
+        run: ./vendor/bin/phpstan analyse --memory-limit=512M
+
+  docker-lint:
+    name: 🔍 Lint Dockerfile (hadolint)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Lint Dockerfile
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: docker/php/Dockerfile
+
+  docker-scan:
+    name: 🔐 Scan Docker image (Trivy)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: 🐳 Build de l'image Docker
+        run: docker build -t my-app-secure docker/php
+
+      - name: 🔐 Scan de sécurité Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: my-app-secure
+          format: table
+          exit-code: 0

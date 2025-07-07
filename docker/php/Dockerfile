@@ -1,20 +1,41 @@
+# 📌 Base image PHP avec FPM
 FROM php:8.2-fpm
 
-# Installer les dépendances système
+# 👨‍🔧 Mainteneur
+LABEL maintainer="Jean Charles Doukouré <c.doukoure@outlook.fr>"
+
+# 🧰 Install system packages and PHP extensions
 RUN apt-get update && apt-get install -y \
     git \
     curl \
+    unzip \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+    libzip-dev \
     zip \
-    unzip
+    && docker-php-ext-install \
+        pdo \
+        pdo_mysql \
+        mbstring \
+        exif \
+        pcntl \
+        zip \
+        gd \
+        xml
 
-# Installer les extensions PHP
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+# 📦 Installer Composer (v2)
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Installer Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Définir le répertoire de travail
+# 🛠️ Set working directory
 WORKDIR /var/www/html
+
+# 🧹 Clean
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# ⚙️ Droits d'accès (à adapter selon ton setup)
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html
+
+# ✅ Health check (optionnel mais pro)
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s CMD php-fpm -t || exit 1
