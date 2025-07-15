@@ -28,16 +28,18 @@ jobs:
           --health-retries=3
 
     steps:
-      - uses: actions/checkout@v3
+      - name: 📥 Checkout du code
+        uses: actions/checkout@v3
 
-      - name: 🎲 Cache Composer
+      - name: 🎲 Cache Composer dependencies
         uses: actions/cache@v3
         with:
-          path: src/vendor
+          path: ./src/vendor
           key: ${{ runner.os }}-composer-${{ hashFiles('src/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
+          restore-keys: |
+            ${{ runner.os }}-composer-
 
-      - name: ⚙️ Setup PHP
+      - name: ⚙️ Installer PHP avec extensions
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.0.30
@@ -45,15 +47,17 @@ jobs:
           ini-values: memory_limit=512M
           coverage: none
 
-      - name: 🔒 Préparer les permissions
+      - name: 🔒 Préparer les répertoires système
         working-directory: ./src
         run: |
+          mkdir -p bootstrap/cache
           mkdir -p storage/framework/{sessions,views,cache}
-          chmod -R 775 storage bootstrap/cache
+          chmod -R 777 storage bootstrap/cache
+          echo "Permissions réparées"
 
       - name: 📦 Installer les dépendances
         working-directory: ./src
-        run: composer install --no-progress --no-interaction --prefer-dist -vvv
+        run: composer install --no-progress --no-interaction --prefer-dist
 
       - name: 🔧 Configurer l'environnement
         working-directory: ./src
