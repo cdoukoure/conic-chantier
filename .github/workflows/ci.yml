@@ -31,6 +31,14 @@ jobs:
       - name: 📥 Checkout du code
         uses: actions/checkout@v3
 
+      - name: 🎲 Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ./src/vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
       - name: ⚙️ Installer PHP avec extensions
         uses: shivammathur/setup-php@v2
         with:
@@ -38,19 +46,18 @@ jobs:
           extensions: pdo, pdo_mysql, mbstring, exif, pcntl, zip, gd, xml
           coverage: none
 
-      - name: 📦 Aller à la racine du projet LARAVEL (./src)
-        run: cd ./src
-
       - name: 📦 Installer les dépendances
+        working-directory: ./src
         run: composer install --no-progress --no-interaction --prefer-dist
 
-      - name: 📂 Copier le fichier .env
-        run: cp .env.example .env
-
-      - name: 🔐 Générer la clé Laravel
-        run: php artisan key:generate
+      - name: 🔧 Configurer l'environnement
+        working-directory: ./src
+        run: |
+          cp .env.example .env
+          php artisan key:generate
 
       - name: 🗄️ Lancer les migrations
+        working-directory: ./src
         env:
           DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1
@@ -61,6 +68,7 @@ jobs:
         run: php artisan migrate --force
 
       - name: ✅ Lancer les tests
+        working-directory: ./src
         run: php artisan test
 
   php-lint:
@@ -68,19 +76,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      
+      - name: 🎲 Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ./src/vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
 
       - name: ⚙️ Installer PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.0.30
       
-      - name: 📦 Aller a la racine du projet LARAVEL (./src)
-        run: cd ./src
-
       - name: 📦 Installer les dépendances
+        working-directory: ./src
         run: composer install --no-progress
 
       - name: 🧠 Analyse avec PHPStan
+        working-directory: ./src
         run: ./vendor/bin/phpstan analyse --memory-limit=512M
 
   docker-lint:
@@ -88,7 +103,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
       - name: Lint Dockerfile
         uses: hadolint/hadolint-action@v3.1.0
         with:
@@ -99,13 +113,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
       - name: 🐳 Build de l'image Docker
-        run: docker build -t my-app-secure docker/php
-
+        run: docker build -t my-app-secure -f docker/php/Dockerfile .
       - name: 🔐 Scan de sécurité Trivy
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: my-app-secure
           format: table
-          exit-code: 0
+          exit-code: 1  # Échoue en cas de vulnérabilités
+          severity: CRITICAL,HIGH
