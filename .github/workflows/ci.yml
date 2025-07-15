@@ -64,16 +64,40 @@ jobs:
         run: |
           cp .env.example .env
           php artisan key:generate
+          # Configuration spécifique MySQL
+          echo "DB_CONNECTION=mysql" >> .env
+          echo "DB_HOST=127.0.0.1" >> .env
+          echo "DB_PORT=3306" >> .env
+          echo "DB_DATABASE=laravel" >> .env
+          echo "DB_USERNAME=laravel" >> .env
+          echo "DB_PASSWORD=laravel1234" >> .env
+          # Pour le debug
+          cat .env | grep DB_
+
+      - name: ⏳ Attendre que MySQL soit prêt
+        run: |
+          for i in {1..10}; do
+            if mysql --host=127.0.0.1 --user=root --password=root -e "SELECT 1" >/dev/null 2>&1; then
+              echo "MySQL est prêt"
+              exit 0
+            fi
+            echo "Tentative $i: MySQL n'est pas encore prêt, attente de 5 secondes..."
+            sleep 5
+          done
+          echo "MySQL n'a pas démarré à temps"
+          exit 1
+
+      - name: 🗄️ Créer la base de données (si nécessaire)
+        run: |
+          mysql --host=127.0.0.1 --user=root --password=root -e "CREATE DATABASE IF NOT EXISTS laravel;"
+          mysql --host=127.0.0.1 --user=root --password=root -e "GRANT ALL PRIVILEGES ON laravel.* TO 'laravel'@'%'; FLUSH PRIVILEGES;"
+
+      - name: 🧪 Tester la connexion à la base
+        run: |
+          mysql --host=127.0.0.1 --user=laravel --password=laravel1234 -e "SHOW DATABASES;"
 
       - name: 🗄️ Lancer les migrations
         working-directory: ./src
-        env:
-          DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_DATABASE: laravel
-          DB_USERNAME: laravel
-          DB_PASSWORD: laravel1234
         run: php artisan migrate --force
 
       - name: ✅ Lancer les tests
