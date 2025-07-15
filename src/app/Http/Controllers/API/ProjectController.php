@@ -57,8 +57,6 @@ class ProjectController extends Controller
             return response()->json($projects);
         }
 
-
-
         $clients = Contact::where('type', 'client')->select('id', 'name')->get();
 
         return view('projects.index', [

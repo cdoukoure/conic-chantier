@@ -3,9 +3,9 @@
 @section('title', 'Projets')
 
 @section('content')
-    <div class="container pt-4">
+   <div class="container pt-4">
 
-        <button class="btn btn-primary mb-3 mt-4" id="btnAddProject">Nouveau projet</button>
+        <button class="btn btn-primary mb-3 mt-4" id="btnAddProject">Nouveau projet</button> 
 
         <table class="table table-bordered" id="projectsTable">
             <thead>
@@ -113,7 +113,7 @@
                     }
                 ],
                 language: {
-                    url: "//cdn.datatables.net/plug-ins/1.11.5/i18n/fr-FR.json"
+                    url: "https://cdn.datatables.net/plug-ins/1.11.5/i18n/fr-FR.json"
                 }
             });
 

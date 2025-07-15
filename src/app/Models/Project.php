@@ -14,7 +14,7 @@ class Project extends Model
      *
      * @var array
      */
-    
+
     protected $fillable = [
         'name',
         'type',
@@ -88,15 +88,6 @@ class Project extends Model
         return $this->hasMany(Project::class, 'parent_id')->where('type', 'chantier');
     }
 
-    /*
-    public function contacts()
-    {
-        return $this->belongsToMany(Contact::class)
-            ->withPivot('role', 'hourly_rate')
-            ->using(ProjectContact::class);
-    }
-    //*/
-
     public function projectContacts()
     {
         return $this->hasMany(ProjectContact::class, 'project_id');
@@ -105,8 +96,8 @@ class Project extends Model
     public function contacts()
     {
         return $this->belongsToMany(Contact::class, 'project_contact')
-            ->withPivot(['role', 'hourly_rate']);
-        // ->withTimestamps(); // si tu as des timestamps
+            ->withPivot(['role', 'hourly_rate'])
+            ->withTimestamps(); // si tu as des timestamps
         //->withoutTimestamps();
     }
 
@@ -166,12 +157,4 @@ class Project extends Model
             ->get()
             ->groupBy('categorie.name');
     }
-
-
-    /*
-    public function budgets()
-    {
-        return $this->hasMany(Budget::class);
-    }
-    //*/
 }

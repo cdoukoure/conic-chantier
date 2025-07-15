@@ -1,15 +1,19 @@
 <?php
 
-use App\Http\Controllers\API\ContactController;
-use App\Http\Controllers\API\ProjectController;
-use App\Http\Controllers\API\ProjectContactController;
-use App\Http\Controllers\API\FinancialMovementCategorieController;
-use App\Http\Controllers\API\FinancialMovementController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
-Route::apiResource('api/contacts', ContactController::class);
-Route::get('contact-types', [ContactController::class, 'types']);
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| is assigned the "api" middleware group. Enjoy building your API!
+|
+*/
 
-Route::apiResource('api/projects', ProjectController::class);
-Route::apiResource('api/project-contacts', ProjectContactController::class);
-Route::apiResource('api/financial-movement-categories', FinancialMovementCategorieController::class);
-Route::apiResource('api/financial-movements', FinancialMovementController::class);
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});

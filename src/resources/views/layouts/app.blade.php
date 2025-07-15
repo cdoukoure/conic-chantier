@@ -20,7 +20,15 @@
 
     <!-- Bootstrap / DataTables / FontAwesome -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.5/css/responsive.bootstrap5.css" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+    <!-- Or for RTL support -->
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.rtl.min.css" />
 
     <!-- vendor css -->
     <link href="{{ asset('theme/ablepro/css/style.css') }}" rel="stylesheet">
@@ -66,12 +74,22 @@
                         <label>Navigation</label>
                     </li>
                     <li class="nav-item">
+                        <a href="/projects" class="nav-link "><span class="pcoded-micon"><i
+                                    class="feather icon-home"></i></span><span class="pcoded-mtext">Projets</span></a>
+                    </li>
+                    <li class="nav-item">
                         <a href="/contacts" class="nav-link "><span class="pcoded-micon"><i
                                     class="feather icon-home"></i></span><span class="pcoded-mtext">Contacts</span></a>
                     </li>
+                </ul>
+
+                <ul class="nav pcoded-inner-navbar ">
+                    <li class="nav-item pcoded-menu-caption">
+                        <label>Configuration</label>
+                    </li>
                     <li class="nav-item">
-                        <a href="/projects" class="nav-link "><span class="pcoded-micon"><i
-                                    class="feather icon-home"></i></span><span class="pcoded-mtext">Projets</span></a>
+                        <a href="/phases" class="nav-link "><span class="pcoded-micon"><i
+                                    class="feather icon-home"></i></span><span class="pcoded-mtext">Phases</span></a>
                     </li>
                 </ul>
 
@@ -291,10 +309,15 @@
     <script src="{{ asset('theme/ablepro/js/pcoded.min.js') }}"></script>
 
     <!-- Scripts communs -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+     
+
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js"></script>
+    <script src="https://cdn.datatables.net/responsive/3.0.5/js/dataTables.responsive.js"></script>
+    <script src="https://cdn.datatables.net/responsive/3.0.5/js/responsive.bootstrap5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     @stack('scripts')
     @yield('scripts') {{-- Permet de rester compatible avec @section('scripts') --}}

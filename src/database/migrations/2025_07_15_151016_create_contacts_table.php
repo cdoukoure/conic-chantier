@@ -7,16 +7,17 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     /**
      * Run the migrations.
+     *
+     * @return void
      */
-    public function up(): void
+    public function up()
     {
-        
         Schema::create('contacts', function (Blueprint $table) {
             $table->id();
             // $table->string('type'); // client, fournisseur, ouvrier, architecte...
             $table->enum('type', ['client', 'fournisseur', 'prestataire', 'ouvrier', 'autre'])->default('client');
             $table->string('name');
-            $table->string('email')->nullable();
+            $table->string('email')->nullable()->unique();
             $table->string('phone');
             $table->string('address')->nullable();
             $table->string('siret')->nullable();
@@ -27,8 +28,10 @@ return new class extends Migration {
 
     /**
      * Reverse the migrations.
+     *
+     * @return void
      */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('contacts');
     }

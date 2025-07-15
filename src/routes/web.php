@@ -1,37 +1,45 @@
 <?php
 
 use App\Http\Controllers\API\ContactController;
+use App\Http\Controllers\API\PhaseController;
 use App\Http\Controllers\API\ProjectController;
 use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
 
 /*
 Route::get('/', function () {
     return view('welcome');
 });
 //*/
+Route::resource('/', ProjectController::class);
+// Route::resource('/', ContactController::class);
 
-
-/* Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index');
-
-Route::resource('contacts', ContactController::class)
-    ->only(['index', 'store', 'update', 'destroy'])
-    ->middleware(['web']); */
-
-
-Route::resource('/', ContactController::class);
 Route::get('/contacts/datatable', [ContactController::class, 'datatable'])->name('contacts.datatable');
-
 Route::resource('contacts', ContactController::class);
-    // ->only(['index', 'store', 'update', 'destroy'])
-    // ->middleware(['web']);
 
-/* Route::get('api/contacts', [ContactController::class, 'index'])
-    ->middleware(['api']); */
+// Route::get('/phases/datatable', [PhaseController::class, 'datatable'])->name('phases.datatable');
+// Route::resource('phases', PhaseController::class);
+Route::prefix('phases')->controller(PhaseController::class)->group(function () {
+    Route::get('/', 'index');
+    Route::get('/datatable', 'datatable')->name('phases.datatable');
+    Route::get('/all', 'all')->name('phases.all');
+    Route::get('/{p}', 'show');
+    Route::post('/', 'store')->name('phases.store');
+    Route::put('/{p}', 'update');
+    Route::delete('/{p}', 'destroy');
+});
 
 Route::get('/projects/datatable', [ProjectController::class, 'datatable'])->name('projects.datatable');
-// Route::get('/projects/{project}/chantiers/datatable', [ProjectController::class, 'projectChantiersDatatable'])->name('projects.projectChantiersDatatable');
-// Route::get('/projects/{project}/contacts/datatable', [ProjectController::class, 'projectContactsDatatable'])->name('projects.projectContactsDatatable');
-// Route::get('/projects/{project}/financial-movements/datatable', [ProjectController::class, 'projectFinancesDatatable'])->name('projects.projectFinancesDatatable');
 Route::prefix('projects/{project}')->group(function () {
     Route::get('chantiers/datatable', [ProjectController::class, 'projectChantiersDatatable'])->name('projects.projectChantiersDatatable');
 
@@ -45,7 +53,4 @@ Route::prefix('projects/{project}')->group(function () {
     Route::put('financial-movements/{movement}', [ProjectController::class, 'updateFinancialMovement']);
     Route::delete('financial-movements/{movement}', [ProjectController::class, 'deleteFinancialMovement']);
 });
-
 Route::resource('projects', ProjectController::class);
-
-    

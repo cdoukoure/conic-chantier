@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Contact extends Model
 {
-
     use HasFactory;
 
     /**
@@ -66,21 +65,12 @@ class Contact extends Model
         return $this->hasMany(ProjectContact::class, 'contact_id');
     }
 
-    /*
     public function projects()
     {
-        return $this->belongsToMany(Project::class)
-            ->withPivot('role', 'hourly_rate')
-            ->using(ProjectContact::class);
-    }
-    //*/
-
-    public function projects()
-    {
-        return $this->belongsToMany(Project::class, 'project_contact')
+        return $this->belongsToMany(Project::class, 'projects_contacts')
             ->withPivot(['role', 'hourly_rate'])
-            // ->withTimestamps(); // si tu as des timestamps
-            ->withoutTimestamps();
+            ->withTimestamps(); // si tu as des timestamps
+            // ->withoutTimestamps();
     }
 
     public function financialMovements()

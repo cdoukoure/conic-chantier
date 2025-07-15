@@ -1,5 +1,5 @@
 # 📌 Base image PHP avec FPM
-FROM php:8.2-fpm
+FROM php:8.0.30-fpm
 
 # 👨‍🔧 Mainteneur
 LABEL maintainer="Jean Charles Doukouré <c.doukoure@outlook.fr>"
@@ -35,7 +35,9 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # ⚙️ Droits d'accès (à adapter selon ton setup)
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html
+    && chmod -R 755 /var/www/html \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
 
 # ✅ Health check (optionnel mais pro)
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s CMD php-fpm -t || exit 1

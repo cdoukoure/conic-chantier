@@ -1,13 +1,10 @@
-version: '3.8'
-
 services:
   # PHP + Composer
   app:
     build:
       context: .
       dockerfile: docker/php/Dockerfile  # Optionnel (si extensions PHP personnalisées)
-    # image: laravel-app
-    image: php:8.0-fpm  # Remplace toute la section build:
+    image: php:8.0.30-fpm  # Remplace toute la section build:
     container_name: conic-chantier
     volumes:
       - ./src:/var/www/html
@@ -15,8 +12,6 @@ services:
     networks:
       - default  # Utilise le réseau bridge par défaut
       - laravel-network
-  # 81a902598dc1
-  # Nginx
   webserver:
     image: nginx:alpine
     container_name: laravel-webserver

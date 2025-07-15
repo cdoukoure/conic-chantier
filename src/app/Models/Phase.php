@@ -8,24 +8,27 @@ use Illuminate\Database\Eloquent\Model;
 class Phase extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'name',
         'description',
         'parent_id',
+        'order',
     ];
 
     /**
      * Validation rules
      */
-    public static function rules($phaseId = null)
+    public static function rules($id = null): array
     {
         return [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:phases,name,' . ($id ?? 'NULL') . ',id',
             'description' => 'nullable|string',
-            'parent_id' => 'nullable',
+            'parent_id' => 'nullable|exists:phases,id|not_in:' . ($id ?? 'NULL'),
+            'order' => 'nullable|numeric',
         ];
     }
+
 
     public function parent()
     {
@@ -35,5 +38,10 @@ class Phase extends Model
     public function children()
     {
         return $this->hasMany(Phase::class, 'parent_id');
+    }
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class, 'phase_id');
     }
 }

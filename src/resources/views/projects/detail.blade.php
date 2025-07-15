@@ -61,7 +61,7 @@
     </div>
 
     {{-- MODAL FORM CHANTIER --}}
-    <div class="modal fade" id="chantierModal" tabindex="-1" aria-labelledby="chantierModalLabel" aria-hidden="true">
+    <div class="modal fade" id="chantierModal" aria-labelledby="chantierModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <form id="chantierForm">
                 @csrf
@@ -82,8 +82,9 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="phase_id" class="form-label">Phase</label>
-                            <select class="form-control" id="phase_id" name="phase_id">
+                            <label for="phase_id" class="form-label w-100">Phase
+                            </label>
+                            <select class="form-select" id="phase_id" name="phase_id" style="width: 100%">
                                 <option value="">-- Aucun --</option>
                                 @foreach($phases as $p)
                                     <option value="{{ $p->id }}">{{ $p->name }}</option>
@@ -122,6 +123,12 @@
         let table;
 
         $(document).ready(function () {
+            $('#phase_id').select2({
+                theme: 'bootstrap-5',
+                dropdownParent: $("#chantierModal"),
+                width: 'resolve' // need to override the changed default
+            });
+
             table = $('#chantiersTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -152,7 +159,7 @@
                     }
                 ],
                 language: {
-                    url: '//cdn.datatables.net/plug-ins/1.11.5/i18n/fr-FR.json'
+                    url: "https://cdn.datatables.net/plug-ins/1.11.5/i18n/fr-FR.json"
                 }
             });
 

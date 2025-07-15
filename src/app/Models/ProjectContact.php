@@ -9,6 +9,8 @@ class ProjectContact extends Model
 {
     use HasFactory;
 
+    use HasFactory;
+
     protected $table = 'project_contact';
 
     protected $fillable = [

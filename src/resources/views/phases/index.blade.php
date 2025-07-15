@@ -5,22 +5,22 @@
 @section('content')
     <div class="container pt-4">
 
-        <button class="btn btn-primary mb-3 mt-4" id="btnAddphase">Nouvelle phase</button>
+        <button class="btn btn-primary mb-3 mt-4" id="btnAddPhase">Nouvelle phase</button>
 
         <table class="table table-bordered" id="phasesTable">
             <thead>
                 <tr>
                     <th>Nom</th>
-                    <th>Description</th>
+                    <!--<th>Description</th>-->
                     <th>Parent</th>
-                    <th>ParentID</th>
+                    <th>Order</th>
                     <th>Actions</th>
                 </tr>
             </thead>
         </table>
     </div>
 
-    <!-- MODAL FORMULAIRE PROJET -->
+    <!-- MODAL -->
     <div class="modal fade" id="phaseModal" tabindex="-1" aria-labelledby="phaseModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <form id="phaseForm">
@@ -37,13 +37,17 @@
                             <input type="text" class="form-control" id="name" name="name" required>
                         </div>
                         <div class="mb-3">
+                            <label for="name" class="form-label">Ordre</label>
+                            <input type="number" step="1" class="form-control" id="order" name="order" required>
+                        </div>
+                        <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
                             <textarea class="form-control" id="description" name="description"></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="parent_id" class="form-label">Parent</label>
+                            <label for="parent_id" class="form-label">Phase parente</label>
                             <select class="form-control" id="parent_id" name="parent_id">
-                                <option value="">-- Aucun --</option>
+                                <option value="">-- Aucune --</option>
                                 @foreach($phases as $phase)
                                     <option value="{{ $phase->id }}">{{ $phase->name }}</option>
                                 @endforeach
@@ -64,93 +68,77 @@
     <script>
         $(function () {
             let table = $('#phasesTable').DataTable({
+                responsive: true,
                 processing: true,
                 serverSide: true,
                 ajax: '{{ route("phases.datatable") }}',
                 columns: [
-                    { data: 'name', title: 'Nom' },
-                    { data: 'description', title: 'Description' },
-                    { data: 'parent_name', title: 'Parent' },
-                    { data: 'parent_id', title: 'Parent ID' },
+                    { data: 'name' },
+                    // { data: 'description' },
+                    { data: 'parent_name' },
+                    { data: 'order' },
                     {
                         data: 'id',
                         orderable: false,
-                        render: function (data) {
+                        render: function (id) {
                             return `
-
-                                                <button class="btn btn-sm btn-outline-primary me-2" onclick="editphase(${data})">
-                                                    Modifier <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-danger" onclick="deletephase(${data})">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            `;
+                            <button class="btn btn-sm btn-outline-primary me-2" onclick="editPhase(${id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deletePhase(${id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        `;
                         }
                     }
                 ],
                 language: {
-                    url: "//cdn.datatables.net/plug-ins/1.11.5/i18n/fr-FR.json"
+                    url: "https://cdn.datatables.net/plug-ins/1.11.5/i18n/fr-FR.json"
                 }
             });
 
-            $('#btnAddphase').click(() => {
+            $('#btnAddPhase').click(() => {
                 $('#phaseForm')[0].reset();
                 $('#phase_id').val('');
-                $('#phaseForm').attr('action', "{{ route('phases.store') }}");
-                $('#phaseModalLabel').text('Nouveau projet');
+                $('#phaseForm').attr('action', '{{ route("phases.store") }}');
+                $('#phaseModalLabel').text('Nouvelle phase');
                 $('#phaseModal').modal('show');
             });
 
-            window.editphase = function (id) {
-                
+            window.editPhase = function (id) {
                 $.getJSON(`/phases/${id}`, function (data) {
-                    console.log(data);
                     $('#phase_id').val(data.id);
                     $('#name').val(data.name);
-                    $('#parent_id').val(data.parent_id);
+                    $('#order').val(data.order);
                     $('#description').val(data.description);
+                    $('#parent_id').val(data.parent_id);
                     $('#phaseForm').attr('action', `/phases/${id}`);
-                    $('#phaseModalLabel').text('Modifier projet');
+                    $('#phaseModalLabel').text('Modifier la phase');
                     $('#phaseModal').modal('show');
                 });
-                //*/
-            }
+            };
 
-            window.deletephase = function (id) {
-                if (confirm('Voulez-vous supprimer ce projet ?')) {
+            window.deletePhase = function (id) {
+                if (confirm('Voulez-vous supprimer cette phase ?')) {
                     $.ajax({
-                        url: '/phases/' + id,
+                        url: `/phases/${id}`,
                         type: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                         success: function () {
                             table.ajax.reload();
                         },
                         error: function (xhr) {
-                            let message = 'Une erreur est survenue';
-
-                            if (xhr.status === 404) {
-                                message = 'Le projet n’existe plus.';
-                            } else if (xhr.status === 403) {
-                                message = 'Vous n’êtes pas autorisé à effectuer cette action.';
-                            } else if (xhr.status === 500) {
-                                message = 'Erreur serveur : ' + xhr.responseJSON?.message;
-                            } else if (xhr.responseJSON?.message) {
-                                message = xhr.responseJSON.message;
-                            }
-
-                            showNotification('Erreur', message, 'danger');
+                            alert(xhr.responseJSON?.message || 'Erreur lors de la suppression');
                         }
                     });
                 }
-            }
+            };
 
             $('#phaseForm').submit(function (e) {
                 e.preventDefault();
-                let form = $(this);
-                let url = form.attr('action');
-                let method = $('#phase_id').val() ? 'PUT' : 'POST';
+                const form = $(this);
+                const url = form.attr('action');
+                const method = $('#phase_id').val() ? 'PUT' : 'POST';
 
                 $.ajax({
                     url: url,
@@ -161,19 +149,7 @@
                         table.ajax.reload();
                     },
                     error: function (xhr) {
-                        let message = 'Une erreur est survenue lors de la sauvegarde';
-
-                        if (xhr.status === 404) {
-                            message = 'Le projet n’existe plus.';
-                        } else if (xhr.status === 403) {
-                            message = 'Vous n’êtes pas autorisé à effectuer cette action.';
-                        } else if (xhr.status === 500) {
-                            message = 'Erreur serveur : ' + xhr.responseJSON?.message;
-                        } else if (xhr.responseJSON?.message) {
-                            message = xhr.responseJSON.message;
-                        }
-
-                        showNotification('Erreur', message, 'danger');
+                        alert(xhr.responseJSON?.message || 'Erreur lors de l’enregistrement');
                     }
                 });
             });

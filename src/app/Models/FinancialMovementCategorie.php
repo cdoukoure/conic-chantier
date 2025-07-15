@@ -14,7 +14,6 @@ class FinancialMovementCategorie extends Model
      *
      * @var array
      */
-    
     protected $fillable = [
         'name',
         'default_flow_type',
