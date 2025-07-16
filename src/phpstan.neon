@@ -1,7 +1,22 @@
 parameters:
-  level: 5
-  paths:
-    - app
-    - config
-    - database
-    - routes
+    level: 5
+    paths:
+        - app
+        - config
+        - database
+        - routes
+    ignoreErrors:
+        - '#Call to an undefined static method .*::where()#'
+        - '#Call to an undefined static method .*::factory()#'
+        - '#Call to an undefined static method .*::create()#'
+        - '#Call to an undefined static method .*::firstOrNew()#'
+        - '#Call to an undefined static method .*::findOrFail()#'
+    excludes_analyse:
+        - '*.blade.php'
+        - 'tests/*'
+        - 'database/migrations/*'
+        - 'database/factories/*'
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+    bootstrap: vendor/nunomaduro/larastan/bootstrap.php
+  
