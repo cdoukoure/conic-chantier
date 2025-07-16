@@ -15,12 +15,11 @@ parameters:
 #        - '#Call to an undefined static method .*::create\(\)#'
 #        - '#Call to an undefined static method .*::firstOrNew\(\)#'
 #        - '#Call to an undefined static method .*::findOrFail\(\)#'
-    excludes_analyse:
-        - '*.blade.php'
-        - 'tests/*'
-        - 'database/migrations/*'
-        - 'database/factories/*'
-    checkMissingIterableValueType: false
-    checkGenericClassInNonGenericObjectType: false
-    bootstrap: vendor/nunomaduro/larastan/bootstrap.php
+#    excludes_analyse:
+#        - '*.blade.php'
+#        - 'tests/*'
+#        - 'database/migrations/*'
+#        - 'database/factories/*'
+#    checkMissingIterableValueType: false
+#    checkGenericClassInNonGenericObjectType: false
   
