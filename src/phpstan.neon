@@ -1,16 +1,20 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - vendor/nesbot/carbon/extension.neon
+
 parameters:
     level: 5
     paths:
         - app
-        - config
+#        - config
         - database
         - routes
-    ignoreErrors:
-        - '#Call to an undefined static method .*::where()#'
-        - '#Call to an undefined static method .*::factory()#'
-        - '#Call to an undefined static method .*::create()#'
-        - '#Call to an undefined static method .*::firstOrNew()#'
-        - '#Call to an undefined static method .*::findOrFail()#'
+#    ignoreErrors:
+#        - '#Call to an undefined static method .*::where\(\)#'
+#        - '#Call to an undefined static method .*::factory\(\)#'
+#        - '#Call to an undefined static method .*::create\(\)#'
+#        - '#Call to an undefined static method .*::firstOrNew\(\)#'
+#        - '#Call to an undefined static method .*::findOrFail\(\)#'
     excludes_analyse:
         - '*.blade.php'
         - 'tests/*'
