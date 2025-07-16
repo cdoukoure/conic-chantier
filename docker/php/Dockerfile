@@ -5,16 +5,17 @@ FROM php:8.0.30-fpm
 LABEL maintainer="Jean Charles Doukouré <c.doukoure@outlook.fr>"
 
 # 🧰 Install system packages and PHP extensions
-RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    unzip \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    libzip-dev \
-    zip \
-    && docker-php-ext-install \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        git=* \
+        curl=* \
+        unzip=* \
+        libpng-dev=* \
+        libonig-dev=* \
+        libxml2-dev=* \
+        libzip-dev=* \
+        zip=* && \
+    docker-php-ext-install \
         pdo \
         pdo_mysql \
         mbstring \
@@ -24,14 +25,14 @@ RUN apt-get update && apt-get install -y \
         gd \
         xml
 
+# 🧹 Clean
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
 # 📦 Installer Composer (v2)
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # 🛠️ Set working directory
 WORKDIR /var/www/html
-
-# 🧹 Clean
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # ⚙️ Droits d'accès (à adapter selon ton setup)
 RUN chown -R www-data:www-data /var/www/html \
