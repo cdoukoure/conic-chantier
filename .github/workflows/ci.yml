@@ -7,6 +7,31 @@ on:
     branches: [main]
 
 jobs:
+  docker-lint:
+    name: 🔍 Lint Dockerfile (hadolint)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Lint Dockerfile
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: docker/php/Dockerfile
+
+  docker-scan:
+    name: 🔐 Scan Docker image (Trivy)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: 🐳 Build de l'image Docker
+        run: docker build -t my-app-secure -f docker/php/Dockerfile .
+      - name: 🔐 Scan de sécurité Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: my-app-secure
+          format: table
+          exit-code: 1 # Échoue en cas de vulnérabilités
+          severity: CRITICAL,HIGH
+          
   laravel-tests:
     name: ✅ Tests Laravel
     runs-on: ubuntu-latest
@@ -122,6 +147,14 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.0.30
+      
+      - name: 🔒 Préparer les répertoires système
+        working-directory: ./src
+        run: |
+          mkdir -p bootstrap/cache
+          mkdir -p storage/framework/{sessions,views,cache}
+          chmod -R 777 storage bootstrap/cache
+          echo "Permissions réparées"
 
       - name: 📦 Installer les dépendances
         working-directory: ./src
@@ -131,27 +164,4 @@ jobs:
         working-directory: ./src
         run: ./vendor/bin/phpstan analyse --memory-limit=512M
 
-  docker-lint:
-    name: 🔍 Lint Dockerfile (hadolint)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Lint Dockerfile
-        uses: hadolint/hadolint-action@v3.1.0
-        with:
-          dockerfile: docker/php/Dockerfile
-
-  docker-scan:
-    name: 🔐 Scan Docker image (Trivy)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: 🐳 Build de l'image Docker
-        run: docker build -t my-app-secure -f docker/php/Dockerfile .
-      - name: 🔐 Scan de sécurité Trivy
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: my-app-secure
-          format: table
-          exit-code: 1 # Échoue en cas de vulnérabilités
-          severity: CRITICAL,HIGH
+  

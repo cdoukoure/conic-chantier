@@ -19,9 +19,9 @@ return new class extends Migration
             $table->enum('type', ['projet', 'chantier'])->default('projet');
             $table->text('description')->nullable();
             $table->decimal('budget', 15, 2)->default(0);
-            $table->date('start_date');
+            $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
-            $table->foreignId('parent_id')->nullable()->constrained('projects')->onDelete('cascade');
+            $table->foreignId('parent_id')->nullable()->constrained('projects');
             $table->foreignId('client_id')->nullable()->constrained('contacts');
             $table->foreignId('phase_id')->nullable()->constrained('phases');
             $table->json('custom_fields')->nullable();

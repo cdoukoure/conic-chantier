@@ -91,6 +91,10 @@
                         <a href="/phases" class="nav-link "><span class="pcoded-micon"><i
                                     class="feather icon-home"></i></span><span class="pcoded-mtext">Phases</span></a>
                     </li>
+                    <li class="nav-item">
+                        <a href="/financial-movement-categories" class="nav-link "><span class="pcoded-micon"><i
+                                    class="feather icon-home"></i></span><span class="pcoded-mtext">Categorie de finances</span></a>
+                    </li>
                 </ul>
 
             </div>

@@ -13,11 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('financial_movements', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
-
+        
         Schema::create('financial_movements', function (Blueprint $table) {
             $table->id();
             $table->foreignId('project_id')->constrained('projects');

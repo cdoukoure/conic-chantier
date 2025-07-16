@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('projects_contacts', function (Blueprint $table) {
+        Schema::create('project_contact', function (Blueprint $table) {
             $table->foreignId('project_id')->constrained('projects')->cascadeOnDelete();
             $table->foreignId('contact_id')->constrained('contacts')->cascadeOnDelete();
             $table->enum('role', ['fournisseur', 'prestataire', 'ouvrier', 'autre'])->default('ouvrier');

@@ -35,9 +35,10 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # ⚙️ Droits d'accès (à adapter selon ton setup)
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html \
-    && chmod -R 775 /var/www/html/storage \
-    && chmod -R 775 /var/www/html/bootstrap/cache
+    && chmod -R 755 /var/www/html
+    # Ces répertoires suivants sont créé après l'installation manuelle de Laravel
+    # && chmod -R 775 /var/www/html/storage \
+    # && chmod -R 775 /var/www/html/bootstrap/cache
 
 
 # ✅ Health check (optionnel mais pro)

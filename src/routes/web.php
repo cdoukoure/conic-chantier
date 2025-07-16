@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\ContactController;
+use App\Http\Controllers\API\FinancialMovementCategorieController;
 use App\Http\Controllers\API\PhaseController;
 use App\Http\Controllers\API\ProjectController;
 use Illuminate\Support\Facades\Route;
@@ -35,6 +36,17 @@ Route::prefix('phases')->controller(PhaseController::class)->group(function () {
     Route::get('/all', 'all')->name('phases.all');
     Route::get('/{p}', 'show');
     Route::post('/', 'store')->name('phases.store');
+    Route::put('/{p}', 'update');
+    Route::delete('/{p}', 'destroy');
+});
+
+// Route::get('/financial-movement-categories/datatable', [FinancialMovementCategorieController::class, 'datatable'])->name('financial-movement-categories.datatable');
+// Route::resource('financial-movement-categories', FinancialMovementCategorieController::class);
+Route::prefix('financial-movement-categories')->controller(FinancialMovementCategorieController::class)->group(function () {
+    Route::get('/', 'index');
+    Route::get('/datatable', 'datatable')->name('financial-movement-categories.datatable');
+    Route::get('/{p}', 'show');
+    Route::post('/', 'store')->name('financial-movement-categories.store');
     Route::put('/{p}', 'update');
     Route::delete('/{p}', 'destroy');
 });
